@@ -1,2 +1,13 @@
 .venv/
 .idea/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.pyz
+*.pyzw
+*.pyc/
+*.pyo/
+*.pyd/
+*.pyz/
+*.pyzw/
