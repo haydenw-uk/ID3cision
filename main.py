@@ -5,7 +5,7 @@ import math
 import pandas as pd
 
 def calculate_entropy():
-    print()
+    print("Test")
 
 
 if __name__ == "__main__":
