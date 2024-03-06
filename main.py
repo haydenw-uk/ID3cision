@@ -4,26 +4,28 @@
 # Import necessary modules
 import math
 import pandas as pd
-import seaborn as sns
+#import seaborn as sns
 
-def get_number_of_classes(data):
-    """
-    :param data: Dataset Pandas object with 'names' list of class names
-    :return: The number of unique classes in the dataset
-    """
-    unique_classes = data['class'].value_counts()
-    return len(unique_classes)
+class Node:
+    def __int__(self, attribute=None, value=None, data=None, children=None):
+        self.attribute = attribute
+        self.value = value
+        self.data = data
+        self.children = children or []
 
-def calculate_probability(data, number_of_classes, attribute):
-    # Return a tuple of the probabilty that it's not
+    def add_child(self, child):
+        self.children.append(child)
 
-    print()
-    # Get
 
-    # Calculate attribute not
-
-def calculate_entropy(p):
-    print()
+def calculate_entropy(data):
+    unique_vales = data['class'].unique()
+    entropy = 0
+    for value in unique_vales:
+        value_count = data[data['class'] == value].shape[0]
+        value_prob = value_count / data.shape[0]
+        if value_prob != 0:
+            entropy -= value_prob * math.log2(value_prob)
+    return entropy
 
 
 
@@ -34,8 +36,8 @@ def calculate_information_gain():
 if __name__ == "__main__":
     cardata = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
 
-    number_of_classes = get_number_of_classes(cardata)
-    print(cardata['buying'].iloc[1])
+    #number_of_classes = get_number_of_classes(cardata)
+    #print(cardata['buying'].iloc[1])
 
 
 
