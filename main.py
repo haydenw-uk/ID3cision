@@ -7,7 +7,7 @@ import pandas as pd
 #import seaborn as sns
 
 class Node:
-    def __int__(self, attribute=None, value=None, data=None, children=None):
+    def __init__(self, attribute=None, value=None, data=None, children=None):
         self.attribute = attribute
         self.value = value
         self.data = data
@@ -35,24 +35,85 @@ def calculate_information_gain(data, attribute):
         subset_prob = subset.shape[0] / data.shape[0]
         subset_entropy = calculate_entropy(subset)
         weighted_entropy += subset_prob * subset_entropy
+    information_gain = original_entropy - weighted_entropy
+    return information_gain
 
+def build_decision_tree(data, attributes):
+    root = None
+
+    if not data.empty:
+        # Check if all instances belong to the same class
+        unique_classes = data['class'].unique()
+        if len(unique_classes) == 1:
+            # Create a leaf node with the class value
+            root = Node(data=data)
+        else:
+            # Calculate the information gain for each attribute
+            information_gains = [(calculate_information_gain(data, attr)) for attr in attributes]
+
+            # if there are attributes left to split on
+            if information_gains:
+                # Select attribute with max information gain out of remainder of the data
+                best_attribute = attributes[information_gains.index(max(information_gains))]
+
+                # Create the root note with best to use attribute
+                root = Node(attribute=best_attribute)
+
+                # Split data based on the values of the best attribute
+                subsets = data.groupby(best_attribute)
+
+                # Create the child nodes for each of the subsets
+                for subset_name, subset in subsets:
+                    filtered_attributes = []
+                    for attr in attributes:
+                        if attr != best_attribute:
+                            filtered_attributes.append(attr)
+                    child = build_decision_tree(subset.drop(best_attribute, axis=1), filtered_attributes)
+                    child.value = subset_name
+                    root.add_child(child)
+            else:
+                # If there are no further attributes to split on, now create a
+                # leaf node with the class which has the majority
+                class_with_majority = data['class'].mode()[0]
+                root = Node(data=data[data['class'] == class_with_majority])
+
+    return root
+
+def output_decision_tree(node, level=0):
+    """ Prints the output decision tree in a formatted manner for a user to view.
+    :param node: The root node of the tree to ensure the entire tree can be output
+    :param level: The entry-level of the tree to ensure the whole tree can be output
+    """
+    # Indents using tabs size multiplied by level to show clear visual difference in nodes of tree
+    indent = "\t" * level
+    if node:
+        if node.attribute:
+            print(str(indent) + "Attribute: " + str(node.attribute))
+        else:
+            print(str(indent) + "Class: " + str(node.data['class'].unique()[0]))
+        for child in node.children:
+            print(str(indent) + "Value: " + str(child.value))
+            next_level = level + 1
+            output_decision_tree(child, next_level)
 
 if __name__ == "__main__":
+    # Load dataset
     cardata = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
 
-    #number_of_classes = get_number_of_classes(cardata)
-    #print(cardata['buying'].iloc[1])
+    attributes = ['buying', 'maint', 'doors', 'persons', 'lugboot']
+    root = build_decision_tree(cardata, attributes)
+
+    output_decision_tree(root)
 
 
 
-    #overall_entropy = calculate_entropy(cardata)
-    #print(f"Overall entropy : {overall_entropy}")
 
 
-    # Find the unique classes and count quantity
-    #unique_classes = cardata['class'].unique()
-    #num_classes = len(unique_classes)
-    #print(f"Unique classes: {unique_classes}\nNumber of classes: {num_classes}")
 
 
-    # Calculate total overall entropy
+
+
+
+
+
+
