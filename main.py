@@ -27,10 +27,14 @@ def calculate_entropy(data):
             entropy -= value_prob * math.log2(value_prob)
     return entropy
 
-
-
-def calculate_information_gain():
-    print("Calculating information gain...")
+def calculate_information_gain(data, attribute):
+    original_entropy = calculate_entropy(data)
+    subsets = data.groupby(attribute)
+    weighted_entropy = 0
+    for subset_name, subset in subsets:
+        subset_prob = subset.shape[0] / data.shape[0]
+        subset_entropy = calculate_entropy(subset)
+        weighted_entropy += subset_prob * subset_entropy
 
 
 if __name__ == "__main__":
