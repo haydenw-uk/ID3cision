@@ -28,6 +28,12 @@ def calculate_entropy(data):
     return entropy
 
 def calculate_information_gain(data, attribute):
+    """
+    Calculates the information gain for a parsed attribute using entropy.
+    :param data: Parsed Dataset
+    :param attribute: Given attribute to calculate information gain for
+    :return: Information gain for specified attribute
+    """
     original_entropy = calculate_entropy(data)
     subsets = data.groupby(attribute)
     weighted_entropy = 0
@@ -39,6 +45,12 @@ def calculate_information_gain(data, attribute):
     return information_gain
 
 def build_decision_tree(data, attributes):
+    """ Builds a decision tree based on the input data frame and attributes
+    based on an implementation of the ID3 algorithm.
+    :param data: DataFrame containing the instances.
+    :param attributes: List of attributes to consider.
+    :return: Root node of the decision tree
+    """
     root = None
 
     if not data.empty:
@@ -49,7 +61,9 @@ def build_decision_tree(data, attributes):
             root = Node(data=data)
         else:
             # Calculate the information gain for each attribute
-            information_gains = [(calculate_information_gain(data, attr)) for attr in attributes]
+            information_gains = []
+            for attr in attributes:
+                information_gains.append(calculate_information_gain(data, attr))
 
             # if there are attributes left to split on
             if information_gains:
@@ -100,20 +114,11 @@ if __name__ == "__main__":
     # Load dataset
     cardata = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
 
+    # Set all possible attributes manually into list
     attributes = ['buying', 'maint', 'doors', 'persons', 'lugboot']
+
+    # Build tree from root
     root = build_decision_tree(cardata, attributes)
 
+    # Graphically
     output_decision_tree(root)
-
-
-
-
-
-
-
-
-
-
-
-
-
