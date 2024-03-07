@@ -18,6 +18,11 @@ class Node:
 
 
 def calculate_entropy(data):
+    """
+    Calculates entropy for data
+    :param data: parsed in dataset
+    :return: calculated entropy
+    """
     unique_vales = data['class'].unique()
     entropy = 0
     for value in unique_vales:
@@ -34,14 +39,23 @@ def calculate_information_gain(data, attribute):
     :param attribute: Given attribute to calculate information gain for
     :return: Information gain for specified attribute
     """
+    # Calcualte original entropy of dataset
     original_entropy = calculate_entropy(data)
+    # Find all subsets of dataset by attribute
     subsets = data.groupby(attribute)
     weighted_entropy = 0
+    # Iterate over each subset
     for subset_name, subset in subsets:
+        # Calculate current subset's probability
+        # by dividing number of instances in subset by total number of instances in total dataset
         subset_prob = subset.shape[0] / data.shape[0]
+        # Calculate entropy for subset by calling function
         subset_entropy = calculate_entropy(subset)
+        # Sum cumulative entropies correctly (weighted entropy)
         weighted_entropy += subset_prob * subset_entropy
+    # Calculate information gain as difference in entropies
     information_gain = original_entropy - weighted_entropy
+    # Return information gain
     return information_gain
 
 def build_decision_tree(data, attributes):
