@@ -4,7 +4,9 @@
 # Import necessary modules
 import math
 import pandas as pd
-#import seaborn as sns
+
+
+# import seaborn as sns
 
 class Node:
     def __init__(self, attribute=None, value=None, data=None, children=None):
@@ -55,6 +57,7 @@ def calculate_entropy(data):
             entropy -= value_prob * math.log2(value_prob)
     return entropy
 
+
 def calculate_information_gain(data, attribute):
     """
     Calculates the information gain for a parsed attribute using entropy.
@@ -80,6 +83,7 @@ def calculate_information_gain(data, attribute):
     information_gain = original_entropy - weighted_entropy
     # Return information gain
     return information_gain
+
 
 def build_decision_tree(data, attributes):
     """ Builds a decision tree based on the input data frame and attributes
@@ -130,6 +134,7 @@ def build_decision_tree(data, attributes):
 
     return root
 
+
 def output_decision_tree(node, level=0):
     """ Prints the output decision tree in a formatted manner for a user to view.
     :param node: The root node of the tree to ensure the entire tree can be output
@@ -148,14 +153,21 @@ def output_decision_tree(node, level=0):
             output_decision_tree(child, next_level)
 
 def predict_instance(tree, instance):
+    """ Predicts the class of an instance using a tree structure.
+    :param tree: The root node of the tree
+    :param instance: The input instance to predict
+    :return: The predicted class of the instance
+    """
     current_node = tree
+    child_node = None
 
     while current_node.children:
-        attribute_value = instance[current_node.attribute]
-        child_node = None
+        instance_value = instance[current_node.attribute]
+
         for child in current_node.children:
-            child_node = child
-            break
+            if child.value == instance_value:
+                child_node = child
+                break
 
         if child_node:
             current_node = child_node
@@ -177,20 +189,27 @@ def measuring_accuracy_of_decision_tree(tree, test_data):
     return accuracy
 
 
-
 if __name__ == "__main__":
     # Load dataset
+    print("Loading dataset ...")
     cardata = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
 
     # Set all possible attributes manually into list
     attributes = ['buying', 'maint', 'doors', 'persons', 'lugboot']
 
+    print("Building decision tree ...")
     # Build tree from root
     root = build_decision_tree(cardata, attributes)
 
-    # Test the decision tree
-    accuracy = measuring_accuracy_of_decision_tree(root, cardata)
-    print("Accuracy of dataset : " + str(accuracy))
-
+    # --- DISPLAYING TREE ----
+    print("\n*** OUTPUT DECISION TREE ***")
     # Graphically displau the tree to terminal
     output_decision_tree(root)
+
+    # --- TESTS, ACCURACY MEASUREMENTS ---
+    print("\n\n--- TESTING, ACCURACY MEASUREMENT DATA ---")
+    test_cardata_sample = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
+
+    # Test the decision tree
+    accuracy = measuring_accuracy_of_decision_tree(root, test_cardata_sample)
+    print("Accuracy of dataset : " + str(accuracy))
