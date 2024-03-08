@@ -147,6 +147,37 @@ def output_decision_tree(node, level=0):
             next_level = level + 1
             output_decision_tree(child, next_level)
 
+def predict_instance(tree, instance):
+    current_node = tree
+
+    while current_node.children:
+        attribute_value = instance[current_node.attribute]
+        child_node = None
+        for child in current_node.children:
+            child_node = child
+            break
+
+        if child_node:
+            current_node = child_node
+        else:
+            break
+
+    return current_node.data['class'].mode()[0]
+
+
+def measuring_accuracy_of_decision_tree(tree, test_data):
+    correct_predictions = 0
+
+    for index, instance in test_data.iterrows():
+        prediction = predict_instance(tree, instance)
+        if prediction == instance['class']:
+            correct_predictions += 1
+
+    accuracy = correct_predictions / test_data.shape[0]
+    return accuracy
+
+
+
 if __name__ == "__main__":
     # Load dataset
     cardata = pd.read_csv('car.csv', header=None, names=['buying', 'maint', 'doors', 'persons', 'lugboot', 'class'])
@@ -156,6 +187,10 @@ if __name__ == "__main__":
 
     # Build tree from root
     root = build_decision_tree(cardata, attributes)
+
+    # Test the decision tree
+    accuracy = measuring_accuracy_of_decision_tree(root, cardata)
+    print("Accuracy of dataset : " + str(accuracy))
 
     # Graphically displau the tree to terminal
     output_decision_tree(root)
