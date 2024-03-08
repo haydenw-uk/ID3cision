@@ -6,8 +6,6 @@ import math
 import pandas as pd
 
 
-# import seaborn as sns
-
 class Node:
     def __init__(self, attribute=None, value=None, data=None, children=None):
         """
