@@ -212,4 +212,4 @@ if __name__ == "__main__":
 
     # Test the decision tree
     accuracy = measuring_accuracy_of_decision_tree(root, test_cardata_sample)
-    print("Accuracy of dataset : " + str(accuracy))
+    print("Accuracy of model on test random sampled data : " + str(accuracy))
