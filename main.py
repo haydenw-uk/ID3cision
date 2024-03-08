@@ -8,12 +8,26 @@ import pandas as pd
 
 class Node:
     def __init__(self, attribute=None, value=None, data=None, children=None):
+        """
+        Constructor for Node class.
+        Note: by default, the constructor needs no arguments (other than self)
+        because the node object could be different type of node e.g. root, child, leaf...
+
+        :param attribute: attribute name (if applicable)
+        :param value: value (if applicable)
+        :param data: (sub)dataset (if applicable)
+        :param children: children of node (if applicable)
+        """
         self.attribute = attribute
         self.value = value
         self.data = data
         self.children = children or []
 
     def add_child(self, child):
+        """
+        Adds a new child node to the tree.
+        :param child: spliced subset of dataset
+        """
         self.children.append(child)
 
 
@@ -23,12 +37,21 @@ def calculate_entropy(data):
     :param data: parsed in dataset
     :return: calculated entropy
     """
+    # Find and save unique classes for dataset
     unique_vales = data['class'].unique()
+    # Ensures default value of entropy for dataset
     entropy = 0
+    # Iterate over every class in dataset
     for value in unique_vales:
+        # Counts occurrences of 'value' in class of data
         value_count = data[data['class'] == value].shape[0]
+        # Calculates probability of value
+        # occurrence out of total dataset count
         value_prob = value_count / data.shape[0]
+        # Check entropy not equal to 0
+        # 0 entropy means dataset is in order, return immediately
         if value_prob != 0:
+            # Calculates entropy based on formula
             entropy -= value_prob * math.log2(value_prob)
     return entropy
 
@@ -134,5 +157,5 @@ if __name__ == "__main__":
     # Build tree from root
     root = build_decision_tree(cardata, attributes)
 
-    # Graphically
+    # Graphically displau the tree to terminal
     output_decision_tree(root)
