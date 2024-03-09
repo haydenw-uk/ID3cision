@@ -5,7 +5,6 @@
 import math
 import pandas as pd
 
-
 class Node:
     def __init__(self, attribute=None, value=None, data=None, children=None):
         """
